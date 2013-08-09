@@ -1,0 +1,19 @@
+{
+  "name": "gene",
+  "version": "0.1.0",
+  "description": "A generator-based control-flow library.",
+  "keywords": ["control-flow", "async", "generator", "yield"],
+  "author": "tasogarepg <tasogare.pg@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/tasogarepg/gene",
+  "repository": "git://github.com/tasogarepg/gene.git",
+  "main": "./lib/gene.js",
+  "engines": { "node": ">= 0.11.4" },
+  "dependencies": {},
+  "devDependencies": {
+    "mocha": "*"
+  },
+  "scripts": {
+    "test": "mocha --harmony-generators"
+  }
+}
