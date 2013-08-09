@@ -137,6 +137,23 @@ gene(function*(g) {
 
 ### setTimeout
 
+simply
+```js
+var gene = require('gene');
+
+gene(function*(g) {
+  // do something
+
+  yield setTimeout(g.cb(), 100); // wait 100ms
+
+  // do something
+
+  yield setTimeout(g.cb(), 200); // wait 200ms
+
+  // do something
+})();
+```
+parallel
 ```js
 var gene = require('gene');
 
@@ -144,15 +161,25 @@ gene(function*(g) {
   var cb1 = g.cb('d1');
   setTimeout(function() {
     try {
-      cb1(null, 'abc');
+      cb1(null, 'ab');
     } catch (e) {
       cb1(e);
     }
-  }, 1000);
-  yield 0;
+  }, 100);
 
-  var str = g.data.d1;
-  console.log(str);   // abc
+  var cb2 = g.cb('d2');
+  setTimeout(function() {
+    try {
+      cb2(null, 'cd');
+    } catch (e) {
+      cb2(e);
+    }
+  }, 50);
+
+  yield 0; // wait 100ms
+
+  var str = g.data.d1 + g.data.d2;
+  console.log(str);   // abcd
 })();
 ```
 
