@@ -106,8 +106,9 @@ describe('Gene', function() {
       } catch(e) {
         if (!/error1/.test(e.message)) throw e;
         var str = g.data.d1 + g.data.d2;
-        assert.equal(str, 'aundefined');
+        assert.equal(str, 'ab');
       }
+      yield 0;
     })(done);
   });
 
@@ -125,10 +126,26 @@ describe('Gene', function() {
         var str = g.data.d1 + g.data.d3;
         assert.equal(str, 'aaaabbbb');
       }
+      yield 0;
     })(done);
   });
 
   it('exception from async and sync cb', function(done) {
+    gene(function*(g) {
+      try {
+        fs.readFile('not_found1', 'utf8', g.cb('d1'));
+        g.cb('d2')(new Error('error1'), 'x');
+        yield 0;
+        assert(false);
+      } catch(e) {
+        var str = g.data.d2;
+        assert.equal(str, 'x');
+      }
+      yield 0;
+    })(done);
+  });
+
+  it('exception from parallel async and sync cb', function(done) {
     gene(function*(g) {
       try {
         fs.readFile(fileA, 'utf8', g.cb('d1'));
@@ -136,13 +153,14 @@ describe('Gene', function() {
         fs.readFile(fileB, 'utf8', g.cb('d3'));
         fs.readFile('not_found2', 'utf8', g.cb('d4'));
         g.cb('d5')(new Error('error1'), 'x');
+        g.cb('d6')(new Error('error2'), 'y');
         yield 0;
         assert(false);
       } catch(e) {
-        if (!/error1/.test(e.message)) throw e;
-        var str = g.data.d5;
-        assert.equal(str, 'x');
+        var str = g.data.d1 + g.data.d3 + g.data.d5 + g.data.d6;
+        assert.equal(str, 'aaaabbbbxy');
       }
+      yield 0;
     })(done);
   });
 
@@ -161,39 +179,31 @@ describe('Gene', function() {
         run += '2';
         if (!/not_found/.test(e.message)) throw e;
       }
+      yield 0;
       assert.equal(run, '12');
     })(done);
   });
 
   it('throw exception from sync to callback', function(done) {
     gene(function*(g) {
-      try {
-        g.cb('d1')(new Error('error1'), 'a');
-        yield 0;
-        assert(false);
-      } catch(e) {
-        if (!/error1/.test(e.message)) throw e;
-        throw new Error('error2');
-      }
-    })(function(err) {
+      g.cb('d1')(new Error('error1'), 'a');
+      yield 0;
+      assert(false);
+    })(function(err, data) {
       assert.notEqual(err, null);
-      done((err.message == 'error2') ? null : err);
+      assert.equal(data.d1, 'a');
+      done((err.message == 'error1') ? null : err);
     });
   });
 
   it('throw exception from async to callback', function(done) {
     gene(function*(g) {
-      try {
-        fs.readFile('not_found1', 'utf8', g.cb('d1'));
-        yield 0;
-        assert(false);
-      } catch(e) {
-        if (!/not_found/.test(e.message)) throw e;
-        throw new Error('error2');
-      }
+      fs.readFile('not_found1', 'utf8', g.cb('d1'));
+      yield 0;
+      assert(false);
     })(function(err) {
       assert.notEqual(err, null);
-      done((err.message == 'error2') ? null : err);
+      done(/not_found/.test(err.message) ? null : err);
     });
   });
 
