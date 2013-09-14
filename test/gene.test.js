@@ -20,10 +20,8 @@ describe('Gene', function() {
 
   it('serial async', function(done) {
     gene(function*(g) {
-      fs.readFile(fileA, 'utf8', g.cb('d1'));
-      yield 0;
-      fs.readFile(fileB, 'utf8', g.cb('d2'));
-      yield 0;
+      yield fs.readFile(fileA, 'utf8', g.cb('d1'));
+      yield fs.readFile(fileB, 'utf8', g.cb('d2'));
       var str = g.data.d1 + g.data.d2;
       assert.equal(str, 'aaaabbbb');
     })(done);
