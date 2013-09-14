@@ -15,6 +15,24 @@ If Node.js is v0.11.x, you must use the `--harmony-generators` flag.
 
 ## Example
 
+### Serial
+
+```js
+var fs = require('fs');
+var gene = require('gene');
+
+gene(function*(g) {
+  yield fs.readFile('/path/to/file1', 'utf8', g.cb('d1'));  // <-- await!
+  yield fs.readFile('/path/to/file2', 'utf8', g.cb('d2'));  // <-- await!
+  yield fs.readFile('/path/to/file3', 'utf8', g.cb('d3'));  // <-- await!
+
+  var str = g.data.d1 + g.data.d2 + g.data.d3;
+  console.log(str);
+})();
+```
+
+### Parallel
+
 ```js
 var fs = require('fs');
 var gene = require('gene');
@@ -22,9 +40,10 @@ var gene = require('gene');
 gene(function*(g) {
   fs.readFile('/path/to/file1', 'utf8', g.cb('d1'));
   fs.readFile('/path/to/file2', 'utf8', g.cb('d2'));
+  fs.readFile('/path/to/file3', 'utf8', g.cb('d3'));
   yield 0;    // <-- await!
 
-  var str = g.data.d1 + g.data.d2;
+  var str = g.data.d1 + g.data.d2 + g.data.d3;
   console.log(str);
 })();
 ```
@@ -42,7 +61,7 @@ gene(function*(g) {
     yield 0;
 
   } catch(e) {
-    console.log(e);
+    // handle error
   }
 })();
 ```
@@ -74,8 +93,7 @@ var fs = require('fs');
 var gene = require('gene');
 
 gene(function*(g) {
-  fs.readFile('/path/to/file1', 'utf8', g.cb('d1'));
-  yield 0;
+  yield fs.readFile('/path/to/file1', 'utf8', g.cb('d1'));
 
   if (true) return; // junp to callback
 
