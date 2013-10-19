@@ -1,7 +1,7 @@
 # gene
 
 A generator-based control-flow library for Node.js.  
-Easily parallel execution and error handling.  
+Easily parallel execute and error handling.  
 
 ## Installation
 
