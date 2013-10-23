@@ -1,6 +1,6 @@
 {
   "name": "gene",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A generator-based control-flow library.",
   "keywords": ["control-flow", "async", "generator", "yield"],
   "author": "tasogarepg <tasogare.pg@gmail.com>",
