@@ -5,6 +5,8 @@ Easily parallel execute and error handling.
 
 ## Installation
 
+Node version >= v0.11.4
+
     $ npm install gene
 
 ## Usage
